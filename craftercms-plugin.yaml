@@ -1,0 +1,63 @@
+# This file describes a plugin for use in Crafter CMS
+
+# The version of the format for this file
+descriptorVersion: 2
+
+# Describe the plugin
+plugin:
+  type: site
+  id: org.craftercms.plugin.youtube
+  name: YouTube
+  tags:
+    - web
+    - youtube
+  version:
+    major: 1
+    minor: 0
+    patch: 0
+  description: A plugin to search and insert YouTube videos in a site
+  website:
+    name: YouTube Plugin
+    url: https://github.com/craftercms/youtube-plugin
+  media:
+    screenshots:
+      - title: Crafter CMS
+        description: Crafter CMS Plugin YouTube
+        url: "https://raw.githubusercontent.com/craftercms/youtube-plugin/master/.crafter/logo.svg"
+  developer:
+    company:
+      name: Crafter Software
+      email: info@craftersoftware.com
+      url: https://craftersoftware.com
+  build:
+    id: c3d2a5444e6a24b5e0481d6ba87901d0b02716c9
+    date: 2021-08-04T00:00:00Z
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  crafterCmsVersions:
+    - major: 4
+      minor: 0
+      patch: 0
+  crafterCmsEditions:
+    - community
+    - enterprise
+  installation:
+    - type: form-control
+      element:
+        name: control
+        children:
+          - name: plugin
+            children:
+              - name: pluginId
+                value: org.craftercms.plugin.youtube
+              - name: type
+                value: control
+              - name: name
+                value: youtube
+              - name: filename
+                value: main.js
+          - name: icon
+            children:
+              - name: class
+                value: fa-youtube
