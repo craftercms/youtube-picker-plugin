@@ -225,6 +225,13 @@
 						</constraint>
 					</constraints>
 				</field>
+			</fields>
+		</section>
+		<section>
+			<title>YouTube Metadata</title>
+			<description></description>
+			<defaultOpen>true</defaultOpen>
+			<fields>
 				<field>
 					<type>youtube</type>
 					<id>youTubeID</id>
@@ -254,13 +261,6 @@
 					<constraints>
 					</constraints>
 				</field>
-			</fields>
-		</section>
-		<section>
-			<title>YouTube Metadata</title>
-			<description></description>
-			<defaultOpen>false</defaultOpen>
-			<fields>
 				<field>
 					<type>label</type>
 					<id>label_s</id>
