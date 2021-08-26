@@ -123,17 +123,37 @@
     const updateInputs = (video) => {
       if (typeof $ !== 'function') return;
 
-      $('#youtubeID_s').find('input')[0].focus();
-      $('#youtubeID_s').find('input')[0].value = video.id.videoId;
+      const $youtubeIdEl = $('#youtubeID_s input');
+      const isIdElDisabled = Boolean($youtubeIdEl.attr('disabled'));
+      const $titleEl = $('#title_s input');
+      const isTitleElDisabled = Boolean($titleEl.attr('disabled'));
+      const $descriptionEl = $('#description_t textarea');
+      const isDescriptionElDisabled = Boolean($descriptionEl.attr('disabled'));
+      const $posterImageEl =  $('#posterImage_s input');
+      const isPosterImageElDisabled = Boolean($posterImageEl.attr('disabled'));
 
-      $('#title_s').find('input')[0].focus();
-      $('#title_s').find('input')[0].value = video.snippet.title;
+      isIdElDisabled && $youtubeIdEl.prop('disabled', false);
+      isTitleElDisabled && $titleEl.prop('disabled', false);
+      isDescriptionElDisabled && $descriptionEl.prop('disabled', false);
+      isPosterImageElDisabled && $posterImageEl.prop('disabled', false);
 
-      $('#description_t').find('textarea')[0].focus();
-      $('#description_t').find('textarea')[0].value = video.snippet.description;
+      $youtubeIdEl.focus();
+      $youtubeIdEl.val(video.id.videoId);
 
-      $('#posterImage_s').find('input')[0].focus();
-      $('#posterImage_s').find('input')[0].value = video.snippet.thumbnails.high.url;
+      $titleEl.focus();
+      $titleEl.val(video.snippet.title);
+
+      $descriptionEl.focus();
+      $descriptionEl.val(video.snippet.description);
+
+      $posterImageEl.focus();
+      $posterImageEl.val(video.snippet.thumbnails.high.url);
+      $posterImageEl.blur();
+
+      isIdElDisabled && $youtubeIdEl.prop('disabled', true);
+      isTitleElDisabled && $titleEl.prop('disabled', true);
+      isDescriptionElDisabled && $descriptionEl.prop('disabled', true);
+      isPosterImageElDisabled && $posterImageEl.prop('disabled', true);
     }
 
     return (
