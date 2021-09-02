@@ -15,7 +15,7 @@ plugin:
     major: 1
     minor: 0
     patch: 1
-  description: A plugin to search and insert YouTube videos in a site
+  description: A plugin to search for and add YouTube videos to a site
   documentation: "https://raw.githubusercontent.com/craftercms/youtube-plugin/master/README.md"
   website:
     name: YouTube Plugin
