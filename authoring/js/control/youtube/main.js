@@ -16,6 +16,19 @@
     }
   }
 
+  function NoApiKeySet() {
+    return /*#__PURE__*/React.createElement('div', {
+      className: 'alert alert-warning'
+    },
+    /*#__PURE__*/React.createElement('span', {
+      className: 'fa fa-exclamation-triangle',
+      style: {
+        marginRight: '5px'
+      }
+    }),
+    'The Google API Key has not been set.');
+  }
+
   function SearchBar({
     onSearchSubmit
   }) {
@@ -157,14 +170,18 @@
       isPosterImageElDisabled && $posterImageEl.prop('disabled', true);
     };
 
-    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", null, "YouTube Picker"), /*#__PURE__*/React.createElement(SearchBar, {
-      onSearchSubmit: keyword => videoSearch(keyword)
-    }), /*#__PURE__*/React.createElement(VideoDetail, {
-      video: selectedVideo
-    }), /*#__PURE__*/React.createElement(VideoList, {
-      onVideoSelect: selectedVideo => onSelectVideo(selectedVideo),
-      videos: videos
-    }));
+    if (googleApiKey !== '') {
+      return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", null, "YouTube Picker"), /*#__PURE__*/React.createElement(SearchBar, {
+        onSearchSubmit: keyword => videoSearch(keyword)
+      }), /*#__PURE__*/React.createElement(VideoDetail, {
+        video: selectedVideo
+      }), /*#__PURE__*/React.createElement(VideoList, {
+        onVideoSelect: selectedVideo => onSelectVideo(selectedVideo),
+        videos: videos
+      }));
+    } else {
+      return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", null, "YouTube Picker"), /*#__PURE__*/React.createElement(NoApiKeySet));
+    }
   }
 
   CStudioForms.Controls.Youtube = CStudioForms.Controls.Youtube || function (id, form, owner, properties, constraints) {

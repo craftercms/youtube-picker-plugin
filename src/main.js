@@ -13,6 +13,19 @@
     }
   }
 
+  function NoApiKeySet() {
+    return /*#__PURE__*/React.createElement('div', {
+        className: 'alert alert-warning'
+      },
+      /*#__PURE__*/React.createElement('span', {
+        className: 'fa fa-exclamation-triangle',
+        style: {
+          marginRight: '5px'
+        }
+      }),
+      'The Google API Key has not been set.');
+  }
+
   function SearchBar({ onSearchSubmit }) {
     const [keyword, setKeyword] = React.useState('');
 
@@ -156,17 +169,26 @@
       isPosterImageElDisabled && $posterImageEl.prop('disabled', true);
     }
 
-    return (
-      <div>
-        <h4>YouTube Picker</h4>
-        <SearchBar onSearchSubmit={(keyword) => videoSearch(keyword)} />
-        <VideoDetail video={selectedVideo}/>
-        <VideoList
-          onVideoSelect={(selectedVideo) => onSelectVideo(selectedVideo)}
-          videos={videos}
-        />
-      </div>
-    );
+    if (googleApiKey !== '') {
+      return (
+        <div>
+          <h4>YouTube Picker</h4>
+          <SearchBar onSearchSubmit={(keyword) => videoSearch(keyword)} />
+          <VideoDetail video={selectedVideo}/>
+          <VideoList
+            onVideoSelect={(selectedVideo) => onSelectVideo(selectedVideo)}
+            videos={videos}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <h4>YouTube Picker</h4>
+          <NoApiKeySet />
+        </div>
+      )
+    }
   }
 
   CStudioForms.Controls.Youtube =
