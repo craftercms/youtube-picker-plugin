@@ -14,16 +14,13 @@
   }
 
   function NoApiKeySet() {
-    return /*#__PURE__*/React.createElement('div', {
-        className: 'alert alert-warning'
-      },
-      /*#__PURE__*/React.createElement('span', {
-        className: 'fa fa-exclamation-triangle',
-        style: {
-          marginRight: '5px'
-        }
-      }),
-      'The Google API Key has not been set.');
+    return (
+      <div className="alert alert-warning">
+        <span className="fa fa-exclamation-triangle" style={{ marginRight: '5px' }}>
+          The Google API Key has not been set.
+        </span>
+      </div>
+    );
   }
 
   function SearchBar({ onSearchSubmit }) {
