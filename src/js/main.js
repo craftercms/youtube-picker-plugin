@@ -1,3 +1,5 @@
+import 'regenerator-runtime/runtime';
+
 (function () {
   var React = CrafterCMSNext.React;
   var ReactDOM = CrafterCMSNext.ReactDOM;

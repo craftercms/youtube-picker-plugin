@@ -13,3 +13,16 @@ After the plugin has been installed you need to setup your Google API Key in the
 # Usage
 
 Once the Google API Key is properly configured you can create any number of YouTube components as needed.
+
+# Build UI
+
+* Go to `src/js`, update `main.js`
+
+* Run following commands:
+
+```
+yarn
+yarn build
+```
+
+* New build is updated to `authoring/js/control/youtube/main.js`
