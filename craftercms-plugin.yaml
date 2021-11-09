@@ -6,25 +6,25 @@ descriptorVersion: 2
 # Describe the plugin
 plugin:
   type: site
-  id: org.craftercms.plugin.youtube
-  name: YouTube
+  id: org.craftercms.plugin.youtube-picker
+  name: YouTube Picker
   tags:
     - web
     - youtube
   version:
     major: 1
     minor: 0
-    patch: 3
+    patch: 4
   description: A plugin to search for and add YouTube videos to a site
-  documentation: "https://raw.githubusercontent.com/craftercms/youtube-plugin/master/README.md"
+  documentation: "https://raw.githubusercontent.com/craftercms/youtube-picker-plugin/master/README.md"
   website:
-    name: YouTube Plugin
-    url: https://github.com/craftercms/youtube-plugin
+    name: YouTube Picker Plugin
+    url: https://github.com/craftercms/youtube-picker-plugin
   media:
     screenshots:
       - title: Crafter CMS
-        description: Crafter CMS Plugin YouTube
-        url: "https://raw.githubusercontent.com/craftercms/youtube-plugin/master/.crafter/logo.svg"
+        description: Crafter CMS Plugin YouTube Picker
+        url: "https://raw.githubusercontent.com/craftercms/youtube-picker-plugin/master/.crafter/logo.svg"
   developer:
     company:
       name: Crafter Software
@@ -51,7 +51,7 @@ plugin:
           - name: plugin
             children:
               - name: pluginId
-                value: org.craftercms.plugin.youtube
+                value: org.craftercms.plugin.youtube-picker
               - name: type
                 value: control
               - name: name
