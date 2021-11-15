@@ -3,38 +3,52 @@ import 'regenerator-runtime/runtime';
 (function () {
   var React = CrafterCMSNext.React;
   var ReactDOM = CrafterCMSNext.ReactDOM;
-  const GOOGLE_API_PATH = '/studio/api/2/plugin/script/org/craftercms/plugin/youtube-picker/youtube/api.json'
+  const GOOGLE_API_PATH = '/studio/api/2/plugin/script/org/craftercms/plugin/youtube-picker/youtube/api.json';
+  const API_KEY_EXISTS = '/studio/api/2/plugin/script/org/craftercms/plugin/youtube-picker/youtube/key_exists.json';
 
-  async function searchYouTube(siteId, keyword) {
-    const url = `${location.origin}${GOOGLE_API_PATH}?siteId=${siteId}&keyword=${keyword}`;
+  async function httpGet(url) {
+    const rxGet = CrafterCMSNext.util.ajax.get;
+    const rxMap = CrafterCMSNext.rxjs.operators.map;
     try {
-      const rxGet = CrafterCMSNext.util.ajax.get;
-      const rxMap = CrafterCMSNext.rxjs.operators.map;
       const response = await rxGet(url).pipe(rxMap(({ response }) => response)).toPromise();
-
       const result = response.result;
-
-      if (result && result.code === 200 && result.data) {
-        return JSON.parse(result.data) || undefined;
-      }
-
-      return undefined;
+      return result;
     } catch (ex) {
       return undefined;
     }
   }
 
-  function SearchBar({ isViewMode, onSearchSubmit }) {
+  async function searchYouTube(siteId, keyword) {
+    const url = `${location.origin}${GOOGLE_API_PATH}?siteId=${siteId}&keyword=${keyword}`;
+    const result = await httpGet(url);
+    if (result && result.code === 200 && result.data) {
+      return JSON.parse(result.data) || undefined;
+    }
+
+    return undefined;
+  }
+
+  async function isConfiguredApiKey(siteId) {
+    const url = `${location.origin}${API_KEY_EXISTS}?siteId=${siteId}`;
+    const result = await httpGet(url);
+    if (result && result.exists) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function SearchBar({ isDisable, onSearchSubmit }) {
     const [keyword, setKeyword] = React.useState('');
 
     const searchChange = (e) => {
-      if (isViewMode) return;
+      if (isDisable) return;
 
       setKeyword(e.target.value);
     };
 
     const submitSearch = (e) => {
-      if (isViewMode) return;
+      if (isDisable) return;
 
       e.preventDefault();
       onSearchSubmit(keyword);
@@ -48,7 +62,7 @@ import 'regenerator-runtime/runtime';
               placeholder="Search YouTube"
               className="form-control"
               onChange={searchChange}
-              disabled={isViewMode}
+              disabled={isDisable}
             />
           </form>
         </div>
@@ -119,6 +133,38 @@ import 'regenerator-runtime/runtime';
   function MyPicker({ siteId, isViewMode }) {
     const [selectedVideo, setSelectedVideo] = React.useState(null);
     const [videos, setVideos] = React.useState([]);
+    const [noApiKey, setNoApiKey] = React.useState(false);
+
+    const youtubeInputElmId = '#youtubeID_s input';
+    const titleInputElmId = '#title_s input';
+    const descriptionTextareaElmId = '#description_t textarea';
+    const posterImageInputElmId = '#posterImage_s input';
+
+    React.useEffect(() => {
+      (async () => {
+        const setMetaAsDisabled = (elementId) => {
+          const timer = setInterval(() => {
+            if (typeof $ !== 'function') return;
+
+            const elm = $(elementId);
+            if (!elm) return;
+
+            elm.prop('disabled', true);
+            clearInterval(timer);
+          }, 100);
+        };
+
+        const configured = await isConfiguredApiKey(siteId);
+        if (configured) {
+          setMetaAsDisabled(youtubeInputElmId);
+          setMetaAsDisabled(titleInputElmId);
+          setMetaAsDisabled(descriptionTextareaElmId);
+          setMetaAsDisabled(posterImageInputElmId);
+        } else {
+          setNoApiKey(true);
+        }
+      })();
+    }, []);
 
     const videoSearch = async (siteId, keyword) => {
       const res = await searchYouTube(siteId, keyword);
@@ -139,13 +185,13 @@ import 'regenerator-runtime/runtime';
     const updateInputs = (video) => {
       if (typeof $ !== 'function') return;
 
-      const $youtubeIdEl = $('#youtubeID_s input');
+      const $youtubeIdEl = $(youtubeInputElmId);
       const isIdElDisabled = Boolean($youtubeIdEl.attr('disabled'));
-      const $titleEl = $('#title_s input');
+      const $titleEl = $(titleInputElmId);
       const isTitleElDisabled = Boolean($titleEl.attr('disabled'));
-      const $descriptionEl = $('#description_t textarea');
+      const $descriptionEl = $(descriptionTextareaElmId);
       const isDescriptionElDisabled = Boolean($descriptionEl.attr('disabled'));
-      const $posterImageEl =  $('#posterImage_s input');
+      const $posterImageEl =  $(posterImageInputElmId);
       const isPosterImageElDisabled = Boolean($posterImageEl.attr('disabled'));
 
       isIdElDisabled && $youtubeIdEl.prop('disabled', false);
@@ -176,9 +222,14 @@ import 'regenerator-runtime/runtime';
       <div>
         <h4>YouTube Picker</h4>
         <SearchBar
-          isViewMode={isViewMode}
+          isDisable={isViewMode || noApiKey}
           onSearchSubmit={(keyword) => videoSearch(siteId, keyword)}
         />
+        {noApiKey && (
+          <span style={{ color: 'red' }}>
+            API key is not configured.
+          </span>
+        )}
         <VideoDetail video={selectedVideo}/>
         <VideoList
           onVideoSelect={(selectedVideo) => onSelectVideo(selectedVideo)}
