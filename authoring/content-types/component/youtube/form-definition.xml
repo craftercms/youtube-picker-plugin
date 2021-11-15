@@ -2,14 +2,14 @@
 	<title>YouTube</title>
 	<description></description>
 	<objectType>component</objectType>
-	<content-type>/component/plugins/org/craftercms/plugin/youtube/youtube</content-type>
+	<content-type>/component/plugins/org/craftercms/plugin/youtube-picker/youtube</content-type>
 	<imageThumbnail>undefined</imageThumbnail>
 	<quickCreate>false</quickCreate>
 	<quickCreatePath></quickCreatePath>
 	<properties>		<property>
 			<name>display-template</name>
 			<label>Display Template</label>
-			<value>/templates/plugins/org/craftercms/plugin/youtube/youtube.ftl</value>
+			<value>/templates/plugins/org/craftercms/plugin/youtube-picker/youtube.ftl</value>
 			<type>template</type>
 		</property>
 		<property>
@@ -241,7 +241,7 @@
 					<defaultValue></defaultValue>
 					<help></help>
 					<plugin>
-						<pluginId>org.craftercms.plugin.youtube</pluginId>
+						<pluginId>org.craftercms.plugin.youtube-picker</pluginId>
 						<type>control</type>
 						<name>youtube</name>
 						<filename>main.js</filename>
