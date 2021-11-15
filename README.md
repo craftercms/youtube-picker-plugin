@@ -26,3 +26,26 @@ yarn build
 ```
 
 * New build is updated to `authoring/js/control/youtube/main.js`
+
+# Configure server
+
+Update studio blacklist:
+
+```
+# method java.net.URL openConnection
+…
+# staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getAt java.lang.Object java.lang.String
+```
+
+Update studio-config.yaml:
+
+```
+# Indicates if access to beans should be restricted
+studio.scripting.restrictBeans: false
+# List of patterns for bean names that should be accessible for the scripts (regexes separated by commas)
+studio.scripting.allowedBeans: 'crafter.textEncryptor'
+```
+
+# Add Google API key
+
+Refer to [add_google_api_key.pdf](add_google_api_key.pdf)

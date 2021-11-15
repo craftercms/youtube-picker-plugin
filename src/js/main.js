@@ -3,36 +3,39 @@ import 'regenerator-runtime/runtime';
 (function () {
   var React = CrafterCMSNext.React;
   var ReactDOM = CrafterCMSNext.ReactDOM;
+  const GOOGLE_API_PATH = '/studio/api/2/plugin/script/org/craftercms/plugin/youtube-picker/youtube/api.json';
 
-  async function searchYouTube(keyword, googleApiKey) {
-    const url = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&type=video&q=${keyword}&key=${googleApiKey}`
+  async function searchYouTube(siteId, keyword) {
+    const url = `${location.origin}${GOOGLE_API_PATH}?siteId=${siteId}&keyword=${keyword}`;
     try {
-      const response = await fetch(url);
-      const data = await response.json();
-      return data || undefined;
+      const rxGet = CrafterCMSNext.util.ajax.get;
+      const rxMap = CrafterCMSNext.rxjs.operators.map;
+      const response = await rxGet(url).pipe(rxMap(({ response }) => response)).toPromise();
+
+      const result = response.result;
+
+      if (result && result.code === 200 && result.data) {
+        return JSON.parse(result.data) || undefined;
+      }
+
+      return undefined;
     } catch (ex) {
       return undefined;
     }
   }
 
-  function NoApiKeySet() {
-    return (
-      <div className="alert alert-warning">
-        <span className="fa fa-exclamation-triangle" style={{ marginRight: '5px' }}>
-          The Google API Key has not been set.
-        </span>
-      </div>
-    );
-  }
-
-  function SearchBar({ onSearchSubmit }) {
+  function SearchBar({ isViewMode, onSearchSubmit }) {
     const [keyword, setKeyword] = React.useState('');
 
     const searchChange = (e) => {
+      if (isViewMode) return;
+
       setKeyword(e.target.value);
     };
 
     const submitSearch = (e) => {
+      if (isViewMode) return;
+
       e.preventDefault();
       onSearchSubmit(keyword);
     };
@@ -45,6 +48,7 @@ import 'regenerator-runtime/runtime';
               placeholder="Search YouTube"
               className="form-control"
               onChange={searchChange}
+              disabled={isViewMode}
             />
           </form>
         </div>
@@ -112,12 +116,12 @@ import 'regenerator-runtime/runtime';
     )
   }
 
-  function MyPicker({ googleApiKey }) {
+  function MyPicker({ siteId, isViewMode }) {
     const [selectedVideo, setSelectedVideo] = React.useState(null);
     const [videos, setVideos] = React.useState([]);
 
-    const videoSearch = async (keyword) => {
-      const res = await searchYouTube(keyword, googleApiKey);
+    const videoSearch = async (siteId, keyword) => {
+      const res = await searchYouTube(siteId, keyword);
 
       if (res && res.items && res.items.length >= 0) {
         setVideos(res.items);
@@ -168,26 +172,20 @@ import 'regenerator-runtime/runtime';
       isPosterImageElDisabled && $posterImageEl.prop('disabled', true);
     }
 
-    if (googleApiKey !== '') {
-      return (
-        <div>
-          <h4>YouTube Picker</h4>
-          <SearchBar onSearchSubmit={(keyword) => videoSearch(keyword)} />
-          <VideoDetail video={selectedVideo}/>
-          <VideoList
-            onVideoSelect={(selectedVideo) => onSelectVideo(selectedVideo)}
-            videos={videos}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <h4>YouTube Picker</h4>
-          <NoApiKeySet />
-        </div>
-      )
-    }
+    return (
+      <div>
+        <h4>YouTube Picker</h4>
+        <SearchBar
+          isViewMode={isViewMode}
+          onSearchSubmit={(keyword) => videoSearch(siteId, keyword)}
+        />
+        <VideoDetail video={selectedVideo}/>
+        <VideoList
+          onVideoSelect={(selectedVideo) => onSelectVideo(selectedVideo)}
+          videos={videos}
+        />
+      </div>
+    );
   }
 
   CStudioForms.Controls.Youtube =
@@ -213,12 +211,6 @@ import 'regenerator-runtime/runtime';
       if (required) {
         this.required = required.value === 'true';
       }
-      var googleapi_key = properties.find(function(property) {
-        return property.name === 'googleapi_key';
-      });
-      if (googleapi_key) {
-        this.googleapi_key = googleapi_key.value;
-      }
     }
 
     return this;
@@ -230,12 +222,11 @@ import 'regenerator-runtime/runtime';
     },
 
     render: function(config, containerEl) {
-      // we need to make the general layout of a control inherit from common
-      // you should be able to override it -- but most of the time it wil be the same
       containerEl.id = this.id;
-      var googleApiKey = this.googleapi_key;
+      const isViewMode = CStudioForms.engine.config.readonly;
 
-      ReactDOM.render( /*#__PURE__*/React.createElement(MyPicker, { googleApiKey }), containerEl);
+      const siteId = CStudioAuthoringContext.site;
+      ReactDOM.render(React.createElement(MyPicker, { siteId, isViewMode }), containerEl);
     },
 
     getValue: function() {
@@ -251,7 +242,7 @@ import 'regenerator-runtime/runtime';
     },
 
     getSupportedProperties: function() {
-      return [{ label: 'Google API Key', name: 'googleapi_key', type: 'string', defaultValue: '' }];
+      return [];
     },
 
     getSupportedConstraints: function() {
