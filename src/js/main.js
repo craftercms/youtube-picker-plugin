@@ -6,6 +6,12 @@ import 'regenerator-runtime/runtime';
   const GOOGLE_API_PATH = '/studio/api/2/plugin/script/org/craftercms/plugin/youtube-picker/youtube/api.json';
   const API_KEY_EXISTS = '/studio/api/2/plugin/script/org/craftercms/plugin/youtube-picker/youtube/key_exists.json';
 
+  function youtubeParser(url){
+    const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return match && match[1].length === 11 ? match[1] : null;
+  }
+
   async function httpGet(url) {
     const rxGet = CrafterCMSNext.util.ajax.get;
     const rxMap = CrafterCMSNext.rxjs.operators.map;
@@ -162,6 +168,16 @@ import 'regenerator-runtime/runtime';
           setMetaAsDisabled(posterImageInputElmId);
         } else {
           setNoApiKey(true);
+          // No API key, should parse the URL to get Youtube ID
+          $(youtubeInputElmId).change(function() {
+            const value = $(this).val();
+            if (value) {
+              const videoId = youtubeParser(value);
+              if (videoId) {
+                $(this).val(videoId);
+              }
+            }
+          });
         }
       })();
     }, []);
@@ -221,14 +237,11 @@ import 'regenerator-runtime/runtime';
     return (
       <div>
         <h4>YouTube Picker</h4>
-        <SearchBar
-          isDisable={isViewMode || noApiKey}
-          onSearchSubmit={(keyword) => videoSearch(siteId, keyword)}
-        />
-        {noApiKey && (
-          <span style={{ color: 'red' }}>
-            API key is not configured.
-          </span>
+        {!noApiKey && (
+          <SearchBar
+            isDisable={isViewMode}
+            onSearchSubmit={(keyword) => videoSearch(siteId, keyword)}
+          />
         )}
         <VideoDetail video={selectedVideo}/>
         <VideoList
